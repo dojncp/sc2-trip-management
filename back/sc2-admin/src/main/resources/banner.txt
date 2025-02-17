@@ -1,0 +1,2 @@
+Application Version: ${sc2.version}
+Spring Boot Version: ${spring-boot.version}

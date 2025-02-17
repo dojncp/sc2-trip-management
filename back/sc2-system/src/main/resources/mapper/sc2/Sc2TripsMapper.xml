@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sc2.sc2.mapper.Sc2TripsMapper">
+    
+    <resultMap type="Sc2Trips" id="Sc2TripsResult">
+        <result property="tripId"    column="trip_id"    />
+        <result property="tripName"    column="trip_name"    />
+        <result property="tripStartDate"    column="trip_start_date"    />
+        <result property="tripEndDate"    column="trip_end_date"    />
+        <result property="tripDepaturePlace"    column="trip_depature_place"    />
+        <result property="tripDestination"    column="trip_destination"    />
+        <result property="tripBudget"    column="trip_budget"    />
+        <result property="tripBudgetCurrency"    column="trip_budget_currency"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSc2TripsVo">
+        select trip_id, trip_name, trip_start_date, trip_end_date, trip_depature_place, trip_destination, trip_budget, trip_budget_currency, create_by, create_time, update_by, update_time, remark from sc2_trips
+    </sql>
+
+    <select id="selectSc2TripsList" parameterType="map" resultMap="Sc2TripsResult">
+        <include refid="selectSc2TripsVo"/>
+        <where>
+            <if test="sc2Trips.tripName != null  and sc2Trips.tripName != ''"> and trip_name like concat('%', #{sc2Trips.tripName}, '%')</if>
+            <if test="sc2Trips.tripStartDate != null "> and trip_start_date = #{sc2Trips.tripStartDate}</if>
+            <if test="sc2Trips.tripEndDate != null "> and trip_end_date = #{sc2Trips.tripEndDate}</if>
+            <if test="sc2Trips.tripDepaturePlace != null  and sc2Trips.tripDepaturePlace != ''"> and trip_depature_place like concat('%', #{sc2Trips.tripDepaturePlace}, '%')</if>
+            <if test="sc2Trips.tripDestination != null  and sc2Trips.tripDestination != ''"> and trip_destination like concat('%', #{sc2Trips.tripDestination}, '%')</if>
+            <!-- 添加userId过滤：如果已登录且不为admin，则仅返回自身所创建的行程 -->
+            <if test="userId != null and userId != 1"> and trip_id in (select trip_id from sc2_user_trip where user_id = #{userId})</if>
+            <!-- 如果已登录且为admin，则不再过滤，即返回所有行程 -->
+            </where>
+    </select>
+    
+    <select id="selectSc2TripsByTripId" parameterType="Long" resultMap="Sc2TripsResult">
+        <include refid="selectSc2TripsVo"/>
+        where trip_id = #{tripId}
+    </select>
+
+    <insert id="insertSc2Trips" parameterType="Sc2Trips" useGeneratedKeys="true" keyProperty="tripId">
+        <selectKey resultType="long" keyProperty="tripId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sc2_trips
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tripName != null and tripName != ''">trip_name,</if>
+            <if test="tripStartDate != null">trip_start_date,</if>
+            <if test="tripEndDate != null">trip_end_date,</if>
+            <if test="tripDepaturePlace != null">trip_depature_place,</if>
+            <if test="tripDestination != null">trip_destination,</if>
+            <if test="tripBudget != null">trip_budget,</if>
+            <if test="tripBudgetCurrency != null">trip_budget_currency,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tripName != null and tripName != ''">#{tripName},</if>
+            <if test="tripStartDate != null">#{tripStartDate},</if>
+            <if test="tripEndDate != null">#{tripEndDate},</if>
+            <if test="tripDepaturePlace != null">#{tripDepaturePlace},</if>
+            <if test="tripDestination != null">#{tripDestination},</if>
+            <if test="tripBudget != null">#{tripBudget},</if>
+            <if test="tripBudgetCurrency != null">#{tripBudgetCurrency},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSc2Trips" parameterType="Sc2Trips">
+        update sc2_trips
+        <trim prefix="SET" suffixOverrides=",">
+            <!-- 后端不准修改行程名称 -->
+<!--            <if test="tripName != null and tripName != ''">trip_name = #{tripName},</if>-->
+            <if test="tripStartDate != null">trip_start_date = #{tripStartDate},</if>
+            <if test="tripEndDate != null">trip_end_date = #{tripEndDate},</if>
+            <if test="tripDepaturePlace != null">trip_depature_place = #{tripDepaturePlace},</if>
+            <if test="tripDestination != null">trip_destination = #{tripDestination},</if>
+            trip_budget = #{tripBudget},
+            trip_budget_currency = #{tripBudgetCurrency},
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where trip_id = #{tripId}
+    </update>
+
+    <delete id="deleteSc2TripsByTripId" parameterType="Long">
+        delete from sc2_trips where trip_id = #{tripId}
+    </delete>
+
+    <delete id="deleteSc2TripsByTripIds" parameterType="String">
+        delete from sc2_trips where trip_id in 
+        <foreach item="tripId" collection="array" open="(" separator="," close=")">
+            #{tripId}
+        </foreach>
+    </delete>
+</mapper>

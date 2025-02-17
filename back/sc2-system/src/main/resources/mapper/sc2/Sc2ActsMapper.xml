@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sc2.sc2.mapper.Sc2ActsMapper">
+    
+    <resultMap type="Sc2Acts" id="Sc2ActsResult">
+        <result property="actId"    column="act_id"    />
+        <result property="tripId"    column="trip_id"    />
+        <result property="actName"    column="act_name"    />
+        <result property="actOrder"    column="act_order"    />
+        <result property="startPoint"    column="start_point"    />
+        <result property="endPoint"    column="end_point"    />
+        <result property="actType"    column="act_type"    />
+        <result property="actTran"    column="act_tran"    />
+        <result property="actDepTime"    column="act_dep_time"    />
+        <result property="actArrTime"    column="act_arr_time"    />
+        <result property="minuteLastInterval"    column="minute_last_interval"    />
+        <result property="actCost"    column="act_cost"    />
+        <result property="actCostType"    column="act_cost_type"    />
+        <result property="actDisKm"    column="act_dis_km"    />
+        <result property="actSpeed"    column="act_speed"    />
+    </resultMap>
+
+    <sql id="selectSc2ActsVo">
+        select act_id, trip_id, act_name, act_order, start_point, end_point, act_type, act_tran, act_dep_time, act_arr_time, minute_last_interval, act_cost, act_cost_type, act_dis_km, act_speed from sc2_acts
+    </sql>
+
+    <select id="selectSc2ActsList" parameterType="Sc2Acts" resultMap="Sc2ActsResult">
+        <include refid="selectSc2ActsVo"/>
+        <where>
+            <!-- 添加userId过滤：如果已登录且不为admin，则仅返回自身所创建的行程相应的移动 -->
+            <if test="userId != null and userId != 1"> and trip_id in (select trip_id from sc2_user_trip where user_id = #{userId})</if>
+            <if test="sc2Acts.actName != null  and sc2Acts.actName != ''"> and act_name like concat('%', #{sc2Acts.actName}, '%')</if>
+            <if test="sc2Acts.actOrder != null "> and act_order = #{sc2Acts.actOrder}</if>
+            <if test="sc2Acts.startPoint != null  and sc2Acts.startPoint != ''"> and start_point = #{sc2Acts.startPoint}</if>
+            <if test="sc2Acts.endPoint != null  and sc2Acts.endPoint != ''"> and end_point = #{sc2Acts.endPoint}</if>
+            <if test="sc2Acts.actType != null  and sc2Acts.actType != ''"> and act_type = #{sc2Acts.actType}</if>
+            <if test="sc2Acts.actTran != null  and sc2Acts.actTran != ''"> and act_tran = #{sc2Acts.actTran}</if>
+            <if test="sc2Acts.actDepTime != null "> and act_dep_time = #{sc2Acts.actDepTime}</if>
+            <if test="sc2Acts.actArrTime != null "> and act_arr_time = #{sc2Acts.actArrTime}</if>
+            <if test="sc2Acts.actCost != null "> and act_cost = #{sc2Acts.actCost}</if>
+            <if test="sc2Acts.actCostType != null  and sc2Acts.actCostType != ''"> and act_cost_type = #{sc2Acts.actCostType}</if>
+        </where>
+        order by trip_id, act_order asc
+    </select>
+    
+    <select id="selectSc2ActsByActId" parameterType="Long" resultMap="Sc2ActsResult">
+        <include refid="selectSc2ActsVo"/>
+        where act_id = #{actId}
+    </select>
+
+    <insert id="insertSc2Acts" parameterType="Sc2Acts" useGeneratedKeys="true" keyProperty="actId">
+        insert into sc2_acts
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tripId != null">trip_id,</if>
+            <if test="actName != null and actName != ''">act_name,</if>
+            <if test="actOrder != null">act_order,</if>
+            <if test="startPoint != null">start_point,</if>
+            <if test="endPoint != null">end_point,</if>
+            <if test="actType != null">act_type,</if>
+            <if test="actTran != null">act_tran,</if>
+            <if test="actDepTime != null">act_dep_time,</if>
+            <if test="actArrTime != null">act_arr_time,</if>
+            <if test="minuteLastInterval != null">minute_last_interval,</if>
+            <if test="actCost != null">act_cost,</if>
+            <if test="actCostType != null">act_cost_type,</if>
+            <if test="actDisKm != null">act_dis_km,</if>
+            <if test="actSpeed != null">act_speed,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tripId != null">#{tripId},</if>
+            <if test="actName != null and actName != ''">#{actName},</if>
+            <if test="actOrder != null">#{actOrder},</if>
+            <if test="startPoint != null">#{startPoint},</if>
+            <if test="endPoint != null">#{endPoint},</if>
+            <if test="actType != null">#{actType},</if>
+            <if test="actTran != null">#{actTran},</if>
+            <if test="actDepTime != null">#{actDepTime},</if>
+            <if test="actArrTime != null">#{actArrTime},</if>
+            <if test="minuteLastInterval != null">#{minuteLastInterval},</if>
+            <if test="actCost != null">#{actCost},</if>
+            <if test="actCostType != null">#{actCostType},</if>
+            <if test="actDisKm != null">#{actDisKm},</if>
+            <if test="actSpeed != null">#{actSpeed},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSc2Acts" parameterType="Sc2Acts">
+        update sc2_acts
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tripId != null">trip_id = #{tripId},</if>
+            <if test="actName != null and actName != ''">act_name = #{actName},</if>
+            <if test="actOrder != null">act_order = #{actOrder},</if>
+            start_point = #{startPoint},
+            end_point = #{endPoint},
+            act_type = #{actType},
+            act_tran = #{actTran},
+            act_dep_time = #{actDepTime},
+            act_arr_time = #{actArrTime},
+            minute_last_interval = #{minuteLastInterval},
+            act_cost = #{actCost},
+            act_cost_type = #{actCostType},
+            act_dis_km = #{actDisKm},
+            act_speed = #{actSpeed},
+        </trim>
+        where act_id = #{actId}
+    </update>
+
+    <delete id="deleteSc2ActsByActId" parameterType="Long">
+        delete from sc2_acts where act_id = #{actId}
+    </delete>
+
+    <delete id="deleteSc2ActsByActIds" parameterType="String">
+        delete from sc2_acts where act_id in 
+        <foreach item="actId" collection="array" open="(" separator="," close=")">
+            #{actId}
+        </foreach>
+    </delete>
+</mapper>
