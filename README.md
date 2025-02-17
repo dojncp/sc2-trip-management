@@ -54,6 +54,8 @@ Dynamic Permission Management: Supports dynamic permission menus with flexible a
 
 18. Database Connection Pool Monitoring: Monitors the status of database connection pools and analyzes SQL performance bottlenecks.
 
+**
+
 1. 用户管理：用户是系统操作者，该功能主要完成系统用户配置。
 
 2. 部门管理：配置系统组织机构（公司、部门、小组），树结构展现支持数据权限。
@@ -90,6 +92,8 @@ Dynamic Permission Management: Supports dynamic permission menus with flexible a
 
 18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
 
+
+
 ## How to Launch 项目启动说明
 
 1. Pre-configured Environment Requirements:
@@ -121,6 +125,8 @@ Dynamic Permission Management: Supports dynamic permission menus with flexible a
    - Default password: **admin123**  
      
      If the login page loads correctly, you can log in successfully, and menus and pages display as expected, then the environment setup is complete.
+
+**
 
 1. 需要提前配置以下环境：
    
