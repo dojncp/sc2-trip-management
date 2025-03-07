@@ -42,3 +42,11 @@ export function delTrips(tripId) {
     method: 'delete'
   })
 }
+
+// 获取当前用户的trips
+export function getMyTrips() {
+  return request({
+    url: 'sc2/trips/my-trips',
+    method: 'get',
+  })
+}

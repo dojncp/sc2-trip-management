@@ -24,6 +24,6 @@ public class SysIndexController
     @RequestMapping("/")
     public String index()
     {
-        return StringUtils.format("欢迎使用{}后台管理框架，当前版本：v{}，请通过前端地址访问。", sc2Config.getName(), sc2Config.getVersion());
+        return StringUtils.format("您已成功访问 {} 的后端地址。当前版本：v{}。", sc2Config.getName(), sc2Config.getVersion());
     }
 }

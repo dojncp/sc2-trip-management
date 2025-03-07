@@ -59,5 +59,18 @@ public interface ISc2ActsService extends IService<Sc2Acts> {
      */
     public int deleteSc2ActsByActId(Long actId);
 
+    /**
+     * 同一行程下的序号 重号校验
+     * @param tripId
+     * @param actOrder
+     * @return
+     */
     boolean isUniqueActOrder(Long tripId, Long actOrder);
+
+    /**
+     * 获取某个tripId对应的act
+     * @param tripName
+     * @return
+     */
+    List<String> getActsOfTheTrip(String tripName);
 }

@@ -107,4 +107,13 @@ public class Sc2TripsController extends BaseController
     {
         return toAjax(sc2TripsService.deleteSc2TripsByTripIds(tripIds));
     }
+
+    /**
+     * 获取当前登录用户的行程信息
+     */
+    @PreAuthorize("@ss.hasPermi('sc2:acts:add')")
+    @GetMapping("/my-trips")
+    public List<String> getMyTrips() {
+        return sc2TripsService.getMyTrips();
+    }
 }

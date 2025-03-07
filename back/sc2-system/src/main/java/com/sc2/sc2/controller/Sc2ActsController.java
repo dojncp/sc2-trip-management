@@ -12,14 +12,7 @@ import com.sc2.sc2.domain.Sc2ActsForDisplay;
 import com.sc2.sc2.service.ISc2TripsService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.sc2.common.annotation.Log;
 import com.sc2.common.core.controller.BaseController;
 import com.sc2.common.core.domain.AjaxResult;
@@ -214,6 +207,17 @@ public class Sc2ActsController extends BaseController
     public AjaxResult remove(@PathVariable Long[] actIds)
     {
         return toAjax(sc2ActsService.deleteSc2ActsByActIds(actIds));
+    }
+
+    /**
+     * 获取某个tripId对应的act
+     * @param tripName
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('sc2:acts:add')")
+    @GetMapping("/acts-of-trip")
+    public List<String> getActsOfTheTrip(@RequestParam String tripName) {
+        return sc2ActsService.getActsOfTheTrip(tripName);
     }
 
 

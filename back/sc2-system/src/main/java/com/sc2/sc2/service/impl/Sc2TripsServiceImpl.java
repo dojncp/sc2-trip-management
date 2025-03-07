@@ -1,7 +1,6 @@
 package com.sc2.sc2.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,11 +9,9 @@ import com.sc2.common.exception.ServiceException;
 import com.sc2.common.utils.DateUtils;
 import com.sc2.sc2.domain.Sc2Acts;
 import com.sc2.sc2.domain.Sc2UserTrip;
-import com.sc2.sc2.mapper.Sc2ActsMapper;
 import com.sc2.sc2.mapper.Sc2UserTripMapper;
 import com.sc2.sc2.service.ISc2ActsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import com.sc2.sc2.mapper.Sc2TripsMapper;
 import com.sc2.sc2.domain.Sc2Trips;
@@ -232,6 +229,24 @@ public class Sc2TripsServiceImpl extends ServiceImpl<Sc2TripsMapper, Sc2Trips> i
         sa.eq(Sc2Acts::getTripId, tripId);
         long thisCount = sc2ActsService.count(sa);
         return thisCount;
+    }
+
+    /**
+     * 获取当前登录用户的行程信息
+     * @return
+     */
+    @Override
+    public List<String> getMyTrips() {
+        Long myUserId = SecurityUtils.getUserId();
+        LambdaQueryWrapper<Sc2UserTrip> sut = new LambdaQueryWrapper<>();
+        sut.eq(Sc2UserTrip::getUserId, myUserId).select(Sc2UserTrip::getTripId);
+        // 获取tripId的值
+        List<Long> myTripIdList = sc2UserTripMapper.selectList(sut).stream().map(Sc2UserTrip::getTripId).collect(Collectors.toList());
+        LambdaQueryWrapper<Sc2Trips> st = new LambdaQueryWrapper<>();
+        st.in(Sc2Trips::getTripId, myTripIdList).select(Sc2Trips::getTripName);
+        // 获取tripName
+        List<String> myTripNameList = sc2TripsMapper.selectList(st).stream().map(Sc2Trips::getTripName).collect(Collectors.toList());
+        return myTripNameList;
     }
 
 }

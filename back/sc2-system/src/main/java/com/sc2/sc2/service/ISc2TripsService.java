@@ -79,4 +79,9 @@ public interface ISc2TripsService extends IService<Sc2Trips> {
      */
     public Long getTripIdByTripName(String tripName);
 
+    /**
+     * 获取当前登录用户的行程信息
+     * @return
+     */
+    List<String> getMyTrips();
 }

@@ -43,5 +43,14 @@ export function delActs(actId) {
   })
 }
 
-// 将trip_name转换为trip_id
+// 获取指定trip下的acts
+export function getActsOfTheTrip(tripName) {
+  return request({
+    url: 'sc2/acts/acts-of-trip',
+    method: 'get',
+    params: {
+      tripName: tripName
+    }
+  })
+}
 

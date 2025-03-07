@@ -211,10 +211,16 @@
     <el-dialog :title="title" v-model="open" width="350px" append-to-body>
       <el-form ref="actsRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="所属行程名称" prop="tripName">
-          <el-input v-model="form.tripName" placeholder="请输入所属行程名称" :disabled="isDisabled"/>
+<!--          <el-input v-model="form.tripName" placeholder="请输入所属行程名称" :disabled="isDisabled"/>-->
+          <el-select v-model="form.tripName" placeholder="请选择所属行程" :disabled="isDisabled">
+            <el-option v-for="item in myTrips" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
         <el-form-item label="移动名称" prop="actName">
           <el-input v-model="form.actName" placeholder="请输入移动名称" />
+<!--          <el-select v-model="form.actName" placeholder="请选择所属移动名称" :disabled="isDisabled">-->
+<!--            <el-option v-for="item in theActs" :key="item" :label="item" :value="item" />-->
+<!--          </el-select>-->
         </el-form-item>
         <el-form-item label="移动序号" prop="actOrder">
           <el-input-number
@@ -290,7 +296,8 @@
 </template>
 
 <script setup name="Acts">
-import { listActs, getActs, delActs, addActs, updateActs} from "@/api/sc2/acts";
+import { listActs, getActs, delActs, addActs, updateActs, getActsOfTheTrip } from "@/api/sc2/acts";
+import { getMyTrips } from "@/api/sc2/trips";
 
 const { proxy } = getCurrentInstance();
 const { sc2_trip_budget_currency } = proxy.useDict('sc2_trip_budget_currency');
@@ -307,6 +314,9 @@ const total = ref(0);
 const title = ref("");
 
 const isDisabled = ref();
+
+const myTrips = ref([]); // 当前用户的trips
+const theActs = ref([]); // 某个trip的acts
 
 const data = reactive({
   form: {},
@@ -340,6 +350,13 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// 选中trip变动后调用该方法
+// function handleTripChange() {
+//   getActsOfTheTrip(form.value.tripName).then(response => {
+//     theActs.value = response;
+//   })
+// }
 
 /** 查询移动列表 */
 function getList() {
@@ -407,6 +424,9 @@ function handleAdd() {
   open.value = true;
   title.value = "添加移动";
   isDisabled.value = false; // 新增状态下可编辑行程名称
+  getMyTrips().then(response => { // 调用接口查询当前用户有哪些trips
+    myTrips.value = response; // 更新trips
+  })
 }
 
 /** 修改按钮操作 */
@@ -431,15 +451,18 @@ function submitForm() {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
+        }).catch( (err) => {
         });
       } else {
         addActs(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
+        }).catch( (err) => {
         });
       }
     }
+  }).catch( (err) => {
   });
 }
 
